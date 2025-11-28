@@ -1,0 +1,63 @@
+services:
+  be:
+    build: ./be
+    restart: unless-stopped
+    environment:
+      - PYTHON_ENV=development
+    volumes:
+      - ./be/app:/usr/src/app
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+  worker:
+    build: ./be
+    restart: unless-stopped
+    environment:
+      - PYTHON_ENV=worker
+    volumes:
+      - ./be/app:/usr/src/app
+    depends_on:
+      - be
+    deploy:
+      replicas: 2
+  beat:
+    build: ./be
+    restart: unless-stopped
+    environment:
+      - PYTHON_ENV=beat
+    depends_on:
+      - db
+  mock_api:
+    build: ./mock_api
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+  fe:
+    build: ./fe
+    restart: unless-stopped
+    depends_on:
+      - be
+    volumes:
+      - ./fe/app:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:5173"
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - ./fe/env/.env
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - .volumes/pgdata-dev:/var/lib/postgresql/data/
+    env_file:
+      - ./be/env/.env.db
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
