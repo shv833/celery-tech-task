@@ -6,3 +6,6 @@ dev:
 
 cdev:
 	$(DOCKER_COMPOSE) -f $(DEV_COMPOSE_FILE) up --force-recreate --remove-orphans --build
+
+logs:
+	$(DOCKER_COMPOSE) -f $(DEV_COMPOSE_FILE) logs -f tests
