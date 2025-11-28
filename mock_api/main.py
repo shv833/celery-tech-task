@@ -30,9 +30,9 @@ async def get_credit_cards(limit: int = 1):
         cards.append(
             {
                 "uid": fake.uuid4(),
-                "credit_card_number": fake.credit_card_number(),
-                "credit_card_expiry_date": fake.credit_card_expire(),
-                "credit_card_type": fake.credit_card_provider(),
+                "cc_number": fake.credit_card_number(),
+                "cc_expiry": fake.credit_card_expire(),
+                "cc_type": fake.credit_card_provider(),
             }
         )
     return cards
